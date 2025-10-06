@@ -505,11 +505,38 @@ export class IAMClient {
   private handleError(error: any, message: string): Error {
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError;
-      const errorMessage = axiosError.response?.data 
-        ? JSON.stringify(axiosError.response.data)
-        : axiosError.message;
-      return new Error(`${message}: ${errorMessage}`);
+      
+      if (axiosError.response?.data) {
+        const errorData: any = axiosError.response.data;
+        
+        // Extract the most relevant error message
+        let errorMessage = message;
+        
+        // Check for Laravel validation errors format
+        if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+        
+        // If there are specific field errors, include them
+        if (errorData.errors) {
+          const fieldErrors = Object.entries(errorData.errors)
+            .map(([field, messages]: [string, any]) => {
+              const msgs = Array.isArray(messages) ? messages : [messages];
+              return msgs.join(', ');
+            })
+            .join('; ');
+          
+          if (fieldErrors) {
+            errorMessage = fieldErrors;
+          }
+        }
+        
+        return new Error(errorMessage);
+      }
+      
+      return new Error(`${message}: ${axiosError.message}`);
     }
+    
     return new Error(`${message}: ${error.message || 'Unknown error'}`);
   }
 }
