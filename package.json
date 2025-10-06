@@ -1,0 +1,53 @@
+{
+  "name": "@adamus/iam-client",
+  "version": "1.0.0",
+  "description": "Node.js/TypeScript client for Adamus IAM service - centralized authentication and authorization",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "authentication",
+    "iam",
+    "sso",
+    "adamus",
+    "react",
+    "nodejs",
+    "typescript"
+  ],
+  "author": "Adamus",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adamus/iam-client.git"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "react": "^18.0.0",
+    "typescript": "^5.0.0",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0",
+    "ts-jest": "^29.0.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
+}

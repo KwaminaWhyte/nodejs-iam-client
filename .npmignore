@@ -1,0 +1,11 @@
+src/
+tsconfig.json
+.gitignore
+*.test.ts
+*.test.tsx
+jest.config.js
+.env
+.env.local
+.DS_Store
+node_modules/
+coverage/
