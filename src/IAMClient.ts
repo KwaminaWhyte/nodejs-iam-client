@@ -2,6 +2,9 @@ import axios, { AxiosInstance, AxiosError } from 'axios';
 import {
   IAMConfig,
   LoginCredentials,
+  PhoneLoginCredentials,
+  SendOtpRequest,
+  SendOtpResponse,
   LoginResponse,
   User,
   Department,
@@ -12,6 +15,7 @@ import {
   PermissionCheckResponse,
   RoleCheckResponse,
   RefreshTokenResponse,
+  PhoneVerificationResponse,
 } from './types';
 
 export class IAMClient {
@@ -278,6 +282,67 @@ export class IAMClient {
       this.clearToken();
     } catch (error) {
       throw this.handleError(error, 'Logout all failed');
+    }
+  }
+
+  // ==================== Phone/OTP Authentication ====================
+
+  /**
+   * Send OTP to phone number
+   */
+  async sendOtp(request: SendOtpRequest): Promise<SendOtpResponse> {
+    try {
+      const response = await this.client.post<SendOtpResponse>('/auth/send-otp', request);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to send OTP');
+    }
+  }
+
+  /**
+   * Login with phone and OTP
+   */
+  async loginWithPhone(credentials: PhoneLoginCredentials): Promise<LoginResponse> {
+    try {
+      const response = await this.client.post<LoginResponse>('/auth/login-with-phone', credentials);
+      this.setToken(response.data.access_token);
+
+      // Extract permissions from roles like Laravel does
+      const enrichedResponse = {
+        ...response.data,
+        permissions: this.extractPermissionsFromLoginResponse(response.data),
+      };
+
+      return enrichedResponse;
+    } catch (error) {
+      throw this.handleError(error, 'Phone login failed');
+    }
+  }
+
+  /**
+   * Send phone verification OTP
+   */
+  async verifyPhone(phone: string): Promise<SendOtpResponse> {
+    try {
+      const response = await this.client.post<SendOtpResponse>('/auth/verify-phone', { phone });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to send phone verification OTP');
+    }
+  }
+
+  /**
+   * Confirm phone verification with OTP
+   */
+  async confirmPhoneVerification(phone: string, otp: string): Promise<PhoneVerificationResponse> {
+    try {
+      const response = await this.client.post<PhoneVerificationResponse>('/auth/confirm-phone-verification', {
+        phone,
+        otp,
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to confirm phone verification');
     }
   }
 

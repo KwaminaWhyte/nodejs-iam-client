@@ -11,6 +11,23 @@ export interface LoginCredentials {
   password: string;
 }
 
+export interface PhoneLoginCredentials {
+  phone: string;
+  otp: string;
+  device_name?: string;
+}
+
+export interface SendOtpRequest {
+  phone: string;
+  purpose?: 'login' | 'verification' | 'password_reset';
+}
+
+export interface SendOtpResponse {
+  message: string;
+  expires_at: string;
+  phone: string;
+}
+
 export interface LoginResponse {
   access_token: string;
   token_type: string;
@@ -23,6 +40,10 @@ export interface User {
   id: string | number;
   name: string;
   email: string;
+  phone?: string;
+  phone_verified?: boolean;
+  phone_verified_at?: string;
+  preferred_login_method?: 'email' | 'phone';
   status?: string;
   roles?: Role[];
   departments?: Department[];
@@ -94,4 +115,10 @@ export interface RefreshTokenResponse {
   access_token: string;
   token_type: string;
   expires_in: number;
+}
+
+export interface PhoneVerificationResponse {
+  message: string;
+  phone_verified: boolean;
+  phone_verified_at: string;
 }
