@@ -295,7 +295,8 @@ export class IAMClient {
       const response = await this.client.post<SendOtpResponse>('/auth/send-otp', request);
       return response.data;
     } catch (error) {
-      throw this.handleError(error, 'Failed to send OTP');
+      // Extract detailed error message for better user feedback
+      throw this.handleError(error, 'Failed to send OTP', true);
     }
   }
 
@@ -315,7 +316,8 @@ export class IAMClient {
 
       return enrichedResponse;
     } catch (error) {
-      throw this.handleError(error, 'Phone login failed');
+      // Extract detailed error message for better user feedback
+      throw this.handleError(error, 'Phone login failed', true);
     }
   }
 
@@ -327,7 +329,8 @@ export class IAMClient {
       const response = await this.client.post<SendOtpResponse>('/auth/verify-phone', { phone });
       return response.data;
     } catch (error) {
-      throw this.handleError(error, 'Failed to send phone verification OTP');
+      // Extract detailed error message for better user feedback
+      throw this.handleError(error, 'Failed to send phone verification OTP', true);
     }
   }
 
@@ -342,7 +345,8 @@ export class IAMClient {
       });
       return response.data;
     } catch (error) {
-      throw this.handleError(error, 'Failed to confirm phone verification');
+      // Extract detailed error message for better user feedback
+      throw this.handleError(error, 'Failed to confirm phone verification', true);
     }
   }
 
@@ -567,7 +571,7 @@ export class IAMClient {
 
   // ==================== Error Handling ====================
 
-  private handleError(error: any, message: string): Error {
+  private handleError(error: any, message: string, preferDetailedMessage: boolean = false): Error {
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError;
       
@@ -577,13 +581,20 @@ export class IAMClient {
         // Extract the most relevant error message
         let errorMessage = message;
         
-        // Check for Laravel validation errors format
-        if (errorData.message) {
+        // For OTP and auth errors, prefer the detailed field-specific error message
+        if (preferDetailedMessage && errorData.errors) {
+          // Try to get the first field error (usually phone or otp)
+          const firstFieldErrors = Object.values(errorData.errors)[0];
+          if (Array.isArray(firstFieldErrors) && firstFieldErrors.length > 0) {
+            errorMessage = firstFieldErrors[0];
+          }
+        } else if (errorData.message) {
+          // Otherwise use the general message
           errorMessage = errorData.message;
         }
         
-        // If there are specific field errors, include them
-        if (errorData.errors) {
+        // If we still haven't found a good message, try field errors
+        if (errorMessage === message && errorData.errors) {
           const fieldErrors = Object.entries(errorData.errors)
             .map(([field, messages]: [string, any]) => {
               const msgs = Array.isArray(messages) ? messages : [messages];
@@ -596,7 +607,11 @@ export class IAMClient {
           }
         }
         
-        return new Error(errorMessage);
+        const err = new Error(errorMessage);
+        // Attach the full error data for programmatic access
+        (err as any).data = errorData;
+        (err as any).statusCode = axiosError.response?.status;
+        return err;
       }
       
       return new Error(`${message}: ${axiosError.message}`);
