@@ -1,6 +1,6 @@
 {
   "name": "adamus-iam-client",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Node.js/TypeScript client for Adamus IAM service - centralized authentication and authorization",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

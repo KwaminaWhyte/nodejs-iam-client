@@ -11,12 +11,23 @@ export interface LoginCredentials {
   password: string;
 }
 
+/**
+ * Phone login credentials
+ * @property phone - 10-digit phone number starting with 0 (e.g., "0248048753")
+ * @property otp - 4-digit OTP code
+ * @property device_name - Optional device identifier
+ */
 export interface PhoneLoginCredentials {
   phone: string;
   otp: string;
   device_name?: string;
 }
 
+/**
+ * Send OTP request
+ * @property phone - 10-digit phone number starting with 0 (e.g., "0248048753")
+ * @property purpose - Purpose of the OTP (default: 'login')
+ */
 export interface SendOtpRequest {
   phone: string;
   purpose?: 'login' | 'verification' | 'password_reset';

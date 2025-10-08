@@ -67,6 +67,27 @@ const isAdmin = await iamClient.hasRole("admin");
 await iamClient.logout();
 ```
 
+### Phone/OTP Authentication
+
+```typescript
+// Send OTP to phone number
+const otpResponse = await iamClient.sendOtp({
+  phone: "0248048753", // 10-digit phone number starting with 0
+  purpose: "login", // 'login' | 'verification' | 'password_reset'
+});
+
+console.log("OTP sent, expires at:", otpResponse.expires_at);
+
+// Login with phone and OTP
+const loginResponse = await iamClient.loginWithPhone({
+  phone: "0248048753",
+  otp: "1234", // 4-digit OTP code
+  device_name: "My Device", // Optional
+});
+
+console.log("Logged in:", loginResponse.user);
+```
+
 ### React.js Usage
 
 #### 1. Setup the IAM Provider

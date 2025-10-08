@@ -289,6 +289,17 @@ export class IAMClient {
 
   /**
    * Send OTP to phone number
+   * @param request - Send OTP request with phone number (10 digits, starting with 0, e.g., "0248048753")
+   * @returns Promise with OTP response containing expiration time
+   * @throws Error if OTP sending fails
+   * @example
+   * ```typescript
+   * const response = await iamClient.sendOtp({
+   *   phone: "0248048753",
+   *   purpose: "login"
+   * });
+   * console.log("OTP expires at:", response.expires_at);
+   * ```
    */
   async sendOtp(request: SendOtpRequest): Promise<SendOtpResponse> {
     try {
@@ -302,6 +313,18 @@ export class IAMClient {
 
   /**
    * Login with phone and OTP
+   * @param credentials - Phone login credentials with 10-digit phone number and 4-digit OTP
+   * @returns Promise with login response containing access token and user data
+   * @throws Error if login fails
+   * @example
+   * ```typescript
+   * const response = await iamClient.loginWithPhone({
+   *   phone: "0248048753",
+   *   otp: "1234",
+   *   device_name: "My Device"
+   * });
+   * console.log("Logged in as:", response.user.name);
+   * ```
    */
   async loginWithPhone(credentials: PhoneLoginCredentials): Promise<LoginResponse> {
     try {
@@ -323,6 +346,9 @@ export class IAMClient {
 
   /**
    * Send phone verification OTP
+   * @param phone - 10-digit phone number starting with 0 (e.g., "0248048753")
+   * @returns Promise with OTP response
+   * @throws Error if verification OTP sending fails
    */
   async verifyPhone(phone: string): Promise<SendOtpResponse> {
     try {
@@ -336,6 +362,10 @@ export class IAMClient {
 
   /**
    * Confirm phone verification with OTP
+   * @param phone - 10-digit phone number starting with 0 (e.g., "0248048753")
+   * @param otp - 4-digit OTP code
+   * @returns Promise with verification response
+   * @throws Error if verification fails
    */
   async confirmPhoneVerification(phone: string, otp: string): Promise<PhoneVerificationResponse> {
     try {

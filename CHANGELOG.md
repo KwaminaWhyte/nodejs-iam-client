@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2025-10-08
+
+### Changed
+- **BREAKING**: Phone number format changed to local Ghana format (10 digits starting with 0, e.g., "0248048753")
+- **BREAKING**: OTP length changed from 6 digits to 4 digits
+- Updated JSDoc comments with phone format examples
+- Updated README with phone/OTP authentication examples
+
+### Documentation
+- Added comprehensive JSDoc comments for phone/OTP methods
+- Added phone/OTP authentication section to README
+- Documented phone format: 10-digit number starting with 0
+- Documented OTP format: 4-digit code
+
 ## [1.0.4] - 2025-10-07
 - Add phone number login and OTP verification
 
