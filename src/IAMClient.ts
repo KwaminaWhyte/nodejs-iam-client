@@ -195,6 +195,28 @@ export class IAMClient {
   }
 
   /**
+   * Verify session with IAM using session cookie
+   */
+  async verifySession(sessionCookie: string): Promise<TokenVerificationResponse> {
+    try {
+      // Remove /api/v1 from base URL and use full path
+      const iamBaseUrl = this.config.baseUrl.replace('/api/v1', '');
+      const response = await axios.get<TokenVerificationResponse>(`${iamBaseUrl}/api/v1/auth/me`, {
+        headers: {
+          'Cookie': `laravel_session=${sessionCookie}`,
+          'Accept': 'application/json',
+        },
+        timeout: this.config.timeout,
+      });
+
+      // Extract permissions from roles like Laravel does
+      return this.enrichPermissionsFromRoles(response.data);
+    } catch (error) {
+      throw this.handleError(error, 'Session verification failed');
+    }
+  }
+
+  /**
    * Get current authenticated user
    */
   async getCurrentUser(): Promise<TokenVerificationResponse> {
@@ -514,6 +536,20 @@ export class IAMClient {
     }
   }
 
+  /**
+   * Search departments (unprotected endpoint for cross-service usage)
+   */
+  async searchDepartments(query: string = ''): Promise<Department[]> {
+    try {
+      const response = await this.client.get<Department[]>('/departments/search', {
+        params: { q: query },
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to search departments');
+    }
+  }
+
   // ==================== Position Management ====================
 
   /**
@@ -596,6 +632,20 @@ export class IAMClient {
       return response.data;
     } catch (error) {
       throw this.handleError(error, 'Failed to fetch position users');
+    }
+  }
+
+  /**
+   * Search positions (unprotected endpoint for cross-service usage)
+   */
+  async searchPositions(query: string = ''): Promise<Position[]> {
+    try {
+      const response = await this.client.get<Position[]>('/positions/search', {
+        params: { q: query },
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to search positions');
     }
   }
 

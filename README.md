@@ -352,6 +352,10 @@ Logout from current session.
 
 Logout from all sessions.
 
+##### `verifySession(sessionCookie: string): Promise<TokenVerificationResponse>`
+
+Verify session with IAM using session cookie. Useful for cross-service authentication with Laravel sessions.
+
 #### User Management Methods
 
 ##### `getUsers(params?: QueryParams): Promise<PaginatedResponse<User>>`
@@ -400,6 +404,10 @@ Delete a department.
 
 Get users in a specific department.
 
+##### `searchDepartments(query: string = ''): Promise<Department[]>`
+
+Search departments by name or description. This is an unprotected endpoint for cross-service usage.
+
 #### Position Management Methods
 
 ##### `getPositions(params?: QueryParams): Promise<PaginatedResponse<Position>>`
@@ -429,6 +437,10 @@ Delete a position.
 ##### `getUsersByPosition(positionId: string | number): Promise<User[]>`
 
 Get users assigned to a specific position.
+
+##### `searchPositions(query: string = ''): Promise<Position[]>`
+
+Search positions by title or description. This is an unprotected endpoint for cross-service usage.
 
 ### React Hooks
 
