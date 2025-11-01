@@ -56,6 +56,33 @@ export interface User {
   phone_verified_at?: string;
   preferred_login_method?: 'email' | 'phone';
   status?: string;
+
+  // Personal Information
+  employee_id?: string;
+  first_name?: string;
+  surname?: string;
+  middle_name?: string;
+  date_of_birth?: string;
+  gender?: string;
+
+  // Work Information
+  site_location?: string;
+  company?: string;
+  date_employed?: string;
+
+  // Profile
+  profile_photo_url?: string;
+
+  // Medical Information
+  blood_group?: string;
+  allergies?: string;
+  chronic_conditions?: string;
+
+  // Emergency Contacts
+  emergency_contact_name?: string;
+  emergency_contact_phone?: string;
+
+  // Relationships
   roles?: Role[];
   departments?: Department[];
   positions?: Position[];
