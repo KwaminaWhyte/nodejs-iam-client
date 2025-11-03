@@ -86,6 +86,19 @@ export interface User {
   roles?: Role[];
   departments?: Department[];
   positions?: Position[];
+  phone_numbers?: UserPhoneNumber[];
+}
+
+export interface UserPhoneNumber {
+  id: string;
+  user_id: string;
+  phone: string;
+  label?: string;
+  is_primary: boolean;
+  is_verified: boolean;
+  verified_at?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Role {

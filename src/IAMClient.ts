@@ -7,6 +7,7 @@ import {
   SendOtpResponse,
   LoginResponse,
   User,
+  UserPhoneNumber,
   Department,
   Position,
   PaginatedResponse,
@@ -399,6 +400,121 @@ export class IAMClient {
     } catch (error) {
       // Extract detailed error message for better user feedback
       throw this.handleError(error, 'Failed to confirm phone verification', true);
+    }
+  }
+
+  // ==================== Phone Number Management ====================
+
+  /**
+   * Get all phone numbers for the authenticated user
+   * @returns Promise with array of user phone numbers
+   * @throws Error if fetch fails
+   */
+  async getUserPhoneNumbers(): Promise<UserPhoneNumber[]> {
+    try {
+      const response = await this.client.get<{ data: UserPhoneNumber[] }>('/user-phone-numbers');
+      return response.data.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to fetch phone numbers');
+    }
+  }
+
+  /**
+   * Add a new phone number to the authenticated user's account
+   * @param phone - 10-digit phone number starting with 0 (e.g., "0248048753")
+   * @param label - Optional label for the phone number (e.g., "Work", "Personal")
+   * @returns Promise with the created phone number
+   * @throws Error if phone number is invalid or already exists
+   */
+  async addPhoneNumber(phone: string, label?: string): Promise<UserPhoneNumber> {
+    try {
+      const response = await this.client.post<{ data: UserPhoneNumber; message: string }>('/user-phone-numbers', {
+        phone,
+        label,
+      });
+      return response.data.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to add phone number', true);
+    }
+  }
+
+  /**
+   * Update a phone number's label
+   * @param id - Phone number ID
+   * @param label - New label for the phone number
+   * @returns Promise with the updated phone number
+   * @throws Error if update fails or phone number doesn't belong to user
+   */
+  async updatePhoneNumber(id: string, label: string): Promise<UserPhoneNumber> {
+    try {
+      const response = await this.client.put<{ data: UserPhoneNumber; message: string }>(`/user-phone-numbers/${id}`, {
+        label,
+      });
+      return response.data.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to update phone number', true);
+    }
+  }
+
+  /**
+   * Delete a phone number
+   * @param id - Phone number ID
+   * @returns Promise that resolves when deletion is complete
+   * @throws Error if deletion fails or phone number is primary
+   */
+  async deletePhoneNumber(id: string): Promise<void> {
+    try {
+      await this.client.delete(`/user-phone-numbers/${id}`);
+    } catch (error) {
+      throw this.handleError(error, 'Failed to delete phone number', true);
+    }
+  }
+
+  /**
+   * Set a phone number as primary
+   * @param id - Phone number ID
+   * @returns Promise with the updated phone number
+   * @throws Error if phone number is not verified or doesn't belong to user
+   */
+  async setPhoneNumberAsPrimary(id: string): Promise<UserPhoneNumber> {
+    try {
+      const response = await this.client.post<{ data: UserPhoneNumber; message: string }>(`/user-phone-numbers/${id}/set-primary`);
+      return response.data.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to set phone number as primary', true);
+    }
+  }
+
+  /**
+   * Send verification OTP to a phone number
+   * @param id - Phone number ID
+   * @returns Promise with OTP expiration information
+   * @throws Error if verification OTP cannot be sent
+   */
+  async sendPhoneNumberVerification(id: string): Promise<{ message: string; expires_at: string }> {
+    try {
+      const response = await this.client.post<{ message: string; expires_at: string }>(`/user-phone-numbers/${id}/send-verification`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to send verification code', true);
+    }
+  }
+
+  /**
+   * Verify a phone number with OTP
+   * @param id - Phone number ID
+   * @param otp - 4-digit OTP code
+   * @returns Promise with the verified phone number
+   * @throws Error if OTP is invalid or expired
+   */
+  async verifyPhoneNumber(id: string, otp: string): Promise<UserPhoneNumber> {
+    try {
+      const response = await this.client.post<{ data: UserPhoneNumber; message: string }>(`/user-phone-numbers/${id}/verify`, {
+        otp,
+      });
+      return response.data.data;
+    } catch (error) {
+      throw this.handleError(error, 'Failed to verify phone number', true);
     }
   }
 
