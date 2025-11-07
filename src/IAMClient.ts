@@ -537,8 +537,10 @@ export class IAMClient {
    */
   async getUser(userId: string | number): Promise<User> {
     try {
-      const response = await this.client.get<User>(`/users/${userId}`);
-      return response.data;
+      const response = await this.client.get<{data: User} | User>(`/users/${userId}`);
+      // Laravel API wraps response in {data: ...}, unwrap it
+      const data = response.data;
+      return 'data' in data ? data.data : data;
     } catch (error) {
       throw this.handleError(error, 'Failed to fetch user');
     }
