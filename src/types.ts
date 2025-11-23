@@ -84,7 +84,9 @@ export interface User {
 
   // Relationships
   roles?: Role[];
-  departments?: Department[];
+  department?: Department; // New one-to-one relationship
+  department_id?: string | number; // Foreign key
+  departments?: Department[]; // Legacy: kept for backward compatibility
   positions?: Position[];
   phone_numbers?: UserPhoneNumber[];
 }
